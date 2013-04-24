@@ -1,0 +1,103 @@
+# Copyright (C) 2012 Dynamic Sidebars
+# This file is distributed under the same license as the Dynamic Sidebars package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Dynamic Sidebars 0.1\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/dynamic-sidebars\n"
+"POT-Creation-Date: 2012-01-04 16:00:07+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2012-01-04 16:06+0100\n"
+"Last-Translator: Vitor Silva Carvalho <lightningspirit@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: dynamic-sidebars.php:118
+#: dynamic-sidebars.php:134
+#: dynamic-sidebars.php:234
+#: dynamic-sidebars.php:246
+msgid "Sidebars"
+msgstr "Barras Laterais"
+
+#: dynamic-sidebars.php:120
+msgctxt "taxonomy general name"
+msgid "Sidebars"
+msgstr "Barras Laterais"
+
+#: dynamic-sidebars.php:121
+msgctxt "taxonomy singular name"
+msgid "Sidebar"
+msgstr "Barras Lateral"
+
+#: dynamic-sidebars.php:122
+msgid "Search Sidebar"
+msgstr "Procurar Barras Laterais"
+
+#: dynamic-sidebars.php:124
+msgid "All Sidebars"
+msgstr "Todas as Barras Laterais"
+
+#: dynamic-sidebars.php:127
+msgid "Edit Sidebar"
+msgstr "Editar Barras Lateral"
+
+#: dynamic-sidebars.php:128
+msgid "Update Sidebar"
+msgstr "Atualizar Barras Lateral"
+
+#: dynamic-sidebars.php:129
+msgid "Add New Sidebar"
+msgstr "Adicionar Nova Barras Lateral"
+
+#: dynamic-sidebars.php:130
+msgid "New Sidebar Name"
+msgstr "Nome da Nova Barras Lateral"
+
+#: dynamic-sidebars.php:131
+msgid "Separate Sidebar names with commas"
+msgstr "Separe nomes das Barras Laterais com vírgulas"
+
+#: dynamic-sidebars.php:132
+msgid "Add or Remove Sidebars"
+msgstr "Adicionar ou Remover Barras Laterais"
+
+#: dynamic-sidebars.php:133
+msgid "Choose from the Most used"
+msgstr "Escolha das Mais Usadas"
+
+#: dynamic-sidebars.php:290
+msgid "There are no Dynamic Sidebars defined"
+msgstr "Não existem Barras Laterais Dynamicas definidas"
+
+#: dynamic-sidebars.php:355
+#: dynamic-sidebars.php:356
+#: dynamic-sidebars.php:357
+#: dynamic-sidebars.php:379
+msgid "ID"
+msgstr "ID"
+
+#: dynamic-sidebars.php:355
+#: dynamic-sidebars.php:356
+msgid "The ID for this sidebar. Need to be unique. Left blank for automatic fill."
+msgstr "O ID para esta Barras Lateral. Necessário ser única.  Deixe em branco para preenchimento automático."
+
+#. Plugin Name of the plugin/theme
+msgid "Dynamic Sidebars"
+msgstr "Barras Laterais Dinâmicas"
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.vcarvalho.com/wordpress-plugins/dynamic-sidebars"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Create dynamically new sidebars for each post, page or custom post type and manage them through the admin Widgets page."
+msgstr "Crie novas Barras Laterais dinamicamente, associe-as a artigos, páginas ou outros tipos de post e adicione Widgets através da página da administração."
+
+#. Author of the plugin/theme
+msgid "lightningspirit"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.vcarvalho.com"
+msgstr ""
+
