@@ -1,0 +1,11 @@
+.fixed .column-widgets {
+	width: 10%;
+}
+
+.fixed .column-taxonomies {
+	width: 13%;
+}
+
+.column-widgets, .column-taxonomies {
+	text-align: center;
+}
