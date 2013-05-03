@@ -3,8 +3,8 @@
 /*
 Plugin Name: Custom Dynamic Sidebars
 Plugin URI: http://wordpress.org/extend/plugins/custom-dynamic-sidebars
-Version: 0.1
-Description: Create custom sidebars for each post, page or custom post type and manage them through the admin Widgets page.
+Version: 0.2
+Description: Create custom sidebars for some posts, pages and categories and manage them through the admin Widgets page.
 Author: lightningspirit
 Author URI: http://profiles.wordpress.org/lightningspirit
 Text Domain: custom-dynamic-sidebars
@@ -21,6 +21,15 @@ License: GPLv2 - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * This code is released under the GPL licence version 2 or later
  * http://www.gnu.org/licenses/gpl.txt
  */
+
+
+
+// Checks if it is accessed from Wordpress' index.php
+if ( ! function_exists( 'add_action' ) ) {
+	die( 'I\'m just a plugin. I must not do anything when called directly!' );
+
+}
+
 
 
 
@@ -42,7 +51,7 @@ class WP_Custom_Dynamic_Sidebars {
 	 * @return void
 	 */
 	public function __construct() {
-		add_action( 'plugins_loaded', array( 'WP_Custom_Dynamic_Sidebars', 'init' ) );
+		add_action( 'plugins_loaded', array( __CLASS__, 'init' ) );
 
 	}
 	
@@ -57,45 +66,55 @@ class WP_Custom_Dynamic_Sidebars {
 		// Load the text domain to support translations
 		load_plugin_textdomain( 'custom-dynamic-sidebars', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 		
+
+		// Just to be parsed by gettext
+		$plugin_headers = array(
+			__( 'Custom Dynamic Sidebars', 'custom-dynamic-sidebars' ).
+			__( 'Create custom sidebars for some posts, pages and categories and manage them through the admin Widgets page.', 'custom-dynamic-sidebars' )
+		);
+
+
 		// if new upgrade
-		if ( version_compare( (int) get_option( 'custom_dynamic_sidebars_version' ), '0.1', '<' ) )
-			add_action( 'admin_init', array( 'WP_Custom_Dynamic_Sidebars', 'do_upgrade' ) );
+		if ( version_compare( (int) get_option( 'custom_dynamic_sidebars_version' ), '0.2', '<' ) )
+			add_action( 'admin_init', array( __CLASS__, 'do_upgrade' ) );
 		
-		add_filter( 'plugin_action_links', array( 'WP_Custom_Dynamic_Sidebars', 'plugin_action_links' ), 10, 2 );
+		add_filter( 'plugin_action_links', array( __CLASS__, 'plugin_action_links' ), 10, 2 );
 		
 		/** Register actions for admin pages */
 		if ( is_admin() ) {
 			/** Add admin menu */
-			add_action( 'admin_menu', array( 'WP_Custom_Dynamic_Sidebars', 'add_page_to_menu' ) );
-			add_filter( 'parent_file', array( 'WP_Custom_Dynamic_Sidebars', 'move_taxonomy_menu' ) );
+			add_action( 'admin_menu', array( __CLASS__, 'add_page_to_menu' ) );
+			add_filter( 'parent_file', array( __CLASS__, 'move_taxonomy_menu' ) );
 			
 			/** widgets.php */
-			add_action( 'widgets_admin_page', array( 'WP_Custom_Dynamic_Sidebars', 'manage_sidebars_link' ), 1 );
-			add_action( 'sidebar_admin_setup', array( 'WP_Custom_Dynamic_Sidebars', 'register_custom_sidebars' ), 1 );
+			add_action( 'widgets_admin_page', array( __CLASS__, 'manage_sidebars_link' ), 1 );
+			add_action( 'sidebar_admin_setup', array( __CLASS__, 'register_custom_sidebars' ), 1 );
 			
 			/** Add form field (position) */
-			add_action( 'admin_print_scripts-edit-tags.php', array( 'WP_Custom_Dynamic_Sidebars', 'taxonomy_sidebar_scripts' ) );
-			add_action( 'admin_print_styles-edit-tags.php', array( 'WP_Custom_Dynamic_Sidebars', 'taxonomy_sidebar_styles' ) );
-			add_action( 'sidebar_add_form_fields', array( 'WP_Custom_Dynamic_Sidebars', 'taxonomy_sidebar_add_form_field' ), 10, 2);
-			add_action( 'sidebar_edit_form_fields', array( 'WP_Custom_Dynamic_Sidebars', 'taxonomy_sidebar_edit_form_field' ), 10, 2);
-			add_action( 'edited_sidebar', array( 'WP_Custom_Dynamic_Sidebars', 'taxonomy_sidebar_fields_save' ), 10, 2);
-			add_action( 'created_sidebar', array( 'WP_Custom_Dynamic_Sidebars', 'taxonomy_sidebar_fields_save' ), 10, 2);
+			add_action( 'admin_print_scripts-edit-tags.php', array( __CLASS__, 'taxonomy_sidebar_scripts' ) );
+			add_action( 'admin_print_styles-edit-tags.php', array( __CLASS__, 'taxonomy_sidebar_styles' ) );
+			add_action( 'sidebar_add_form_fields', array( __CLASS__, 'taxonomy_sidebar_add_form_field' ), 10, 2);
+			add_action( 'sidebar_edit_form_fields', array( __CLASS__, 'taxonomy_sidebar_edit_form_field' ), 10, 2);
+			add_action( 'edited_sidebar', array( __CLASS__, 'taxonomy_sidebar_fields_save' ), 10, 2);
+			add_action( 'created_sidebar', array( __CLASS__, 'taxonomy_sidebar_fields_save' ), 10, 2);
 			
 			/** Sidebar taxonomy UI tweaks */
-			add_action( 'load-edit-tags.php', array( 'WP_Custom_Dynamic_Sidebars', 'load_taxonomy_sidebar_screen' ) );
-			add_action( 'manage_edit-sidebar_columns', array( 'WP_Custom_Dynamic_Sidebars', 'manage_taxonomy_sidebar_columns' ) );
-			add_action( 'manage_sidebar_custom_column', array( 'WP_Custom_Dynamic_Sidebars', 'manage_taxonomy_sidebar_custom_columns' ), 10, 3 );
-			add_action( 'manage_edit-sidebar_sortable_columns', array( 'WP_Custom_Dynamic_Sidebars', 'manage_taxonomy_sidebar_sortable_columns' ) );
-			add_action( 'sidebar_row_actions', array( 'WP_Custom_Dynamic_Sidebars', 'sidebar_filter_row_actions' ) );
+			add_action( 'load-edit-tags.php', array( __CLASS__, 'load_taxonomy_sidebar_screen' ) );
+			add_action( 'manage_edit-sidebar_columns', array( __CLASS__, 'manage_taxonomy_sidebar_columns' ) );
+			add_action( 'manage_sidebar_custom_column', array( __CLASS__, 'manage_taxonomy_sidebar_custom_columns' ), 10, 3 );
+			add_action( 'manage_edit-sidebar_sortable_columns', array( __CLASS__, 'manage_taxonomy_sidebar_sortable_columns' ) );
+			add_action( 'sidebar_row_actions', array( __CLASS__, 'sidebar_filter_row_actions' ) );
 			
 			/** Custom metabox for sidebars */
-			add_action( 'add_meta_boxes', array( 'WP_Custom_Dynamic_Sidebars', 'sidebar_meta_box' ) );
-			add_action( 'save_post', array( 'WP_Custom_Dynamic_Sidebars', 'sidebar_save_post' ), 10, 2 );
+			add_action( 'add_meta_boxes', array( __CLASS__, 'sidebar_meta_box' ) );
+			add_action( 'save_post', array( __CLASS__, 'sidebar_save_post' ), 10, 2 );
 			
 			/** Add custom form fields to taxonomies (general) that are public and show_ui */
 			foreach ( get_taxonomies( array( 'show_ui' => true, 'public' => true ) ) as $taxonomy ) {
-				add_action( "{$taxonomy}_edit_form_fields", array( 'WP_Custom_Dynamic_Sidebars', 'taxonomy_general_edit_form_field' ), 10, 2);
-				add_action( "edited_{$taxonomy}", array( 'WP_Custom_Dynamic_Sidebars', 'taxonomy_general_fields_save' ), 10, 2);
+				add_action( "{$taxonomy}_edit_form_fields", array( __CLASS__, 'taxonomy_general_edit_form_field' ), 10, 2);
+				add_action( "edited_{$taxonomy}", array( __CLASS__, 'taxonomy_general_fields_save' ), 10, 2);
+				add_action( "{$taxonomy}_edit_form_fields", array( __CLASS__, 'taxonomy_general_edit_form_field' ), 10, 2);
+				add_action( "edited_{$taxonomy}", array( __CLASS__, 'taxonomy_general_fields_save' ), 10, 2);
 				
 			}
 			
@@ -103,9 +122,9 @@ class WP_Custom_Dynamic_Sidebars {
 		}
 		
 		/** Register, create and load custom sidebars */
-		add_action( 'init', array( 'WP_Custom_Dynamic_Sidebars', 'register_taxonomy_for_sidebars' ), 1 );
-		add_action( 'wp_head', array( 'WP_Custom_Dynamic_Sidebars', 'load_custom_sidebars' ) );
-		add_filter( 'sidebars_widgets', array( 'WP_Custom_Dynamic_Sidebars', 'replace_sidebars' ) );
+		add_action( 'init', array( __CLASS__, 'register_taxonomy_for_sidebars' ), 1 );
+		add_action( 'wp_head', array( __CLASS__, 'load_custom_sidebars' ) );
+		add_filter( 'sidebars_widgets', array( __CLASS__, 'replace_sidebars' ) );
 
 	}
 	
@@ -117,7 +136,7 @@ class WP_Custom_Dynamic_Sidebars {
 	 * @return void
 	 */
 	public static function do_upgrade() {
-		update_option( 'custom_dynamic_sidebars_version', '0.1' );
+		update_option( 'custom_dynamic_sidebars_version', '0.2' );
 		
 	}
 	
@@ -352,7 +371,7 @@ class WP_Custom_Dynamic_Sidebars {
 		$screen->add_help_tab( array(
 			'id'	=> 'general_custom_sidebar',
 			'title'	=> __( 'Overview' ),
-			'content'	=> '<p>' . __( 'This screen provides access to all user defined custom sidebars. You can add, edit or remove custom dynamic sidebars here. A dynamic sidebar area (or just sidebar) is a holder where you can drop widgets. One can create a cusotm sidebar and dislaying it only in some posts, pages or categories.' ) . '</p>',
+			'content'	=> '<p>' . __( 'This screen provides access to all user defined custom sidebars. You can add, edit or remove custom dynamic sidebars here. A dynamic sidebar area (or just sidebar) is a holder where you can drop widgets. You are able to create your own custom sidebars and dislaying them in some your selected posts, pages or categories.' ) . '</p>',
 			)
 		);
 		
@@ -360,9 +379,9 @@ class WP_Custom_Dynamic_Sidebars {
 			'id'	=> 'manage_custom_sidebar',
 			'title'	=> __( 'Managing Sidebars' ),
 			'content'	=> 
-				'<p>' . __( 'To create a custom sidebar just add one with form from the left of this screen giving it a name and choose a position to be replaced. Those positions are theme specific and, unless you edit the currently activated theme, you can not create or remove none of them.' ) . '</p>' .
-				'<p>' . sprintf( __( 'After adding a theme it will be instantly available in the <a href="%s">Widgets</a> screen, thus you can add widgets to the sidebar.' ), 'widgets.php' ) . '</p>' .
-				'<p>' . __( 'To remove a custom sidebar listed in the table on the right side of the screen just use the row actions provided for each row to edit and delete it.' ) . '</p>'
+				'<p>' . __( 'To create a custom sidebar just name it, add a brief description and select a position provided by the current theme, using the form in the left of this screen. Note: sidebar positions are theme specific and you are not able to create or remove any from the dashboard.' ) . '</p>' .
+				'<p>' . sprintf( __( 'After theme activation you can go to <a href="%s">Widgets</a> screen, thus you can add widgets to you custom sidebars.' ), 'widgets.php' ) . '</p>' .
+				'<p>' . __( 'To edit or remove a custom sidebar just use the row actions provided.' ) . '</p>'
 			)
 		);
 		
@@ -370,8 +389,15 @@ class WP_Custom_Dynamic_Sidebars {
 			'id'	=> 'associate_custom_sidebar',
 			'title'	=> __( 'Associating with content' ),
 			'content'	=> 
-				'<p>' . __( 'If you want to associate a custom sidebar to a post or page, just navigate to the edit screen of the desired post/page and check the listed boxes representing the custom sidebars you want to associate to, in the «Sidebars» metabx on the right side of the screen.' ) . '</p>' .
-				'<p>' . __( 'To associate a post to a Category or a post Tag, just navigate to the desired edit term screen and select from the «Sidebars» boxes the ones you want to asociate to.' ) . '</p>'
+				'<p>' . __( 'Associating sidebars to posts, pages and categories is simple! You have to visit the edit screen of the desired post/page/category and check the custom sidebars you want to display, inside the «Sidebars» metabox on the right side of the screen.' ) . '</p>'
+			)
+		);
+
+		$screen->add_help_tab( array(
+			'id'	=> 'contributing',
+			'title'	=> __( 'Contributing' ),
+			'content'	=> 
+				'<p>' . sprintf( __( 'You can contribute with code, patches, translations and documentation. You can add new features or replace the existing ones. Just visit the <a href="%s" target="_blank">plugin official page</a> and create a new issue.' ), 'https://github.com/lightningspirit/WordPress-Custom-Dynamic-Sidebars' ) . '</p>'
 			)
 		);
 		
@@ -482,7 +508,7 @@ class WP_Custom_Dynamic_Sidebars {
 		$post_types = apply_filters( 'custom_dynamic_sidebars_post_types', $post_types );
 		
 		if ( in_array( $post_type, $post_types ) ) 
-			add_meta_box( 'custom-dynamic-sidebars', __( 'Sidebars' ), array( 'WP_Custom_Dynamic_Sidebars', 'sidebar_meta_box_content' ), $post_type, 'side', 'default' );
+			add_meta_box( 'custom-dynamic-sidebars', __( 'Sidebars' ), array( __CLASS__, 'sidebar_meta_box_content' ), $post_type, 'side', 'default' );
 		
 	}
 	

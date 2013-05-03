@@ -1,4 +1,4 @@
 WordPress-Custom-Dynamic-Sidebars
 =================================
 
-Create custom sidebars for each post, page or custom post type and manage them through the admin Widgets page.
+Create custom sidebars and associate them to some posts, pages or categories, replacing the default ones.
