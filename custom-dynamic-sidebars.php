@@ -3,7 +3,7 @@
 /*
 Plugin Name: Custom Dynamic Sidebars
 Plugin URI: http://wordpress.org/extend/plugins/custom-dynamic-sidebars
-Version: 0.1
+Version: 0.2
 Description: Create custom sidebars for each post, page or custom post type and manage them through the admin Widgets page.
 Author: lightningspirit
 Author URI: http://profiles.wordpress.org/lightningspirit
@@ -775,7 +775,7 @@ class WP_Custom_Dynamic_Sidebars {
 		} elseif ( isset( $wp_query->queried_object_id ) && ( is_category() || is_tag() || is_tax() ) ) {
 			$sidebar_terms_relationships = get_option( "sidebar_terms_relationships" );
 			foreach ( (array) $sidebar_terms_relationships as $sidebar => $terms ) {
-				if ( in_array( $wp_query->queried_object_id, $terms ) ) {
+				if ( in_array( $wp_query->queried_object_id, (array) $terms ) ) {
 					$custom_sidebars[] = get_term_by( 'slug', $sidebar, 'sidebar' );
 					
 				}
